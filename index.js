@@ -9,7 +9,7 @@ require("dotenv").config();
 // middleware
 app.use(cors());
 app.use(express.json());
-
+app.use("/api/product", product);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.li11u.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -53,6 +53,12 @@ async function run() {
             const options = { upsert: false };
             const updatedStatus = await appointmentCollection.updateOne(query, updateDoc, options);
             res.json(updatedStatus);
+        })
+        app.delete("/allAppointments/:id",async(req,res)=>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result=await appointmentCollection.deleteOne(query);
+            res.json(result)
         })
     }
     finally {
