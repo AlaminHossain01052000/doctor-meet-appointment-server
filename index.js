@@ -20,7 +20,12 @@ async function run() {
         await client.connect();
         const doctorCollection = client.db("doctor-meet-appointment").collection("doctors");
         const appointmentCollection = client.db("doctor-meet-appointment").collection("allAppointments");
-
+        const testCollection = client.db("doctor-meet-appointment").collection("diagnosticOne");
+        const sectionCollection = client.db("doctor-meet-appointment").collection("diagnosticSection");
+        const specialityCollection = client.db("doctor-meet-appointment").collection("diagnosticSpeciality");
+        const imagingCollection = client.db("doctor-meet-appointment").collection("imaging");
+        const pathologyCollection = client.db("doctor-meet-appointment").collection("pathology");
+        const bookedDiagnosisCollection=client.db("doctor-meet-appointment").collection("booked-diagnosis");
         app.get("/doctors",async(req,res)=>{
             const doctors = await doctorCollection.find({}).toArray();
             res.json(doctors);
@@ -41,10 +46,56 @@ async function run() {
             const result = await appointmentCollection.findOne(query);
             res.json(result);
         })
+        app.get("/testProcuders", async (req, res) => {
+           
+            const result = await testCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/sections", async (req, res) => {
+           
+            const result = await sectionCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/speciality", async (req, res) => {
+           
+            const result = await specialityCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/imaging", async (req, res) => {
+           
+            const result = await imagingCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/pathology", async (req, res) => {
+           
+            const result = await pathologyCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/bookedDiagnosis",async(req,res)=>{
+            const bookedDiagnosis = await bookedDiagnosisCollection.find({}).toArray();
+            res.json(bookedDiagnosis);
+        })
+        app.get("/bookedDiagnosis/single", async (req, res) => {
+            const query={ email: req.query.email };
+            const myBookedDiagnosis = await bookedDiagnosisCollection.find(query).toArray();
+            res.json(myBookedDiagnosis);
+        })
+        app.get("/bookedDiagnosis/:id", async (req, res) => {
+            const id=req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookedDiagnosisCollection.findOne(query);
+            res.json(result);
+        })
         app.post("/allAppointments", async (req, res) => {
 
             const appointment = await appointmentCollection.insertOne(req.body);
             res.json(appointment);
+        })
+        
+        app.post("/bookedDiagnosis", async (req, res) => {
+
+            const diagnosos = await bookedDiagnosisCollection.insertOne(req.body);
+            res.json(diagnosos);
         })
         app.put("/allAppointments/:id", async (req, res) => {
             const id = req.params.id;
@@ -55,10 +106,25 @@ async function run() {
             const updatedStatus = await appointmentCollection.updateOne(query, updateDoc, options);
             res.json(updatedStatus);
         })
+        app.put("/bookedDiagnosis/:id", async (req, res) => {
+            const id = req.params.id;
+
+            const query = { _id: ObjectId(id) };
+            const updateDoc = { $set: { paymentStatus: "paid" } };
+            const options = { upsert: true };
+            const updatedStatus = await bookedDiagnosisCollection.updateOne(query, updateDoc, options);
+            res.json(updatedStatus);
+        })
         app.delete("/allAppointments/:id",async(req,res)=>{
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result=await appointmentCollection.deleteOne(query);
+            res.json(result)
+        })
+        app.delete("/bookedDiagnosis/:id",async(req,res)=>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result=await bookedDiagnosisCollection.deleteOne(query);
             res.json(result)
         })
     }
