@@ -102,7 +102,7 @@ async function run() {
 
             const query = { _id: ObjectId(id) };
             const updateDoc = { $set: { status: "paid" } };
-            const options = { upsert: false };
+            const options = { upsert: true };
             const updatedStatus = await appointmentCollection.updateOne(query, updateDoc, options);
             res.json(updatedStatus);
         })
