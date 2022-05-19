@@ -75,6 +75,7 @@ async function run() {
             const bookedDiagnosis = await bookedDiagnosisCollection.find({}).toArray();
             res.json(bookedDiagnosis);
         })
+        
         app.get("/bookedDiagnosis/single", async (req, res) => {
             const query={ email: req.query.email };
             const myBookedDiagnosis = await bookedDiagnosisCollection.find(query).toArray();
@@ -86,6 +87,13 @@ async function run() {
             const result = await bookedDiagnosisCollection.findOne(query);
             res.json(result);
         })
+        app.get("/doctors/:id", async (req, res) => {
+            const id=req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await doctorCollection.findOne(query);
+            res.json(result);
+        })
+        
         app.post("/allAppointments", async (req, res) => {
 
             const appointment = await appointmentCollection.insertOne(req.body);
@@ -113,6 +121,15 @@ async function run() {
             const updateDoc = { $set: { paymentStatus: "paid" } };
             const options = { upsert: true };
             const updatedStatus = await bookedDiagnosisCollection.updateOne(query, updateDoc, options);
+            res.json(updatedStatus);
+        })
+        app.put("/doctors/:id", async (req, res) => {
+            const id = req.params.id;
+            
+            const query = { _id: ObjectId(id) };
+            const updateDoc = { $set: req.body };
+            const options = { upsert: true };
+            const updatedStatus = await doctorCollection.updateOne(query, updateDoc, options);
             res.json(updatedStatus);
         })
         app.delete("/allAppointments/:id",async(req,res)=>{
