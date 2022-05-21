@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const product = require('./api/product');
 const { MongoClient } = require('mongodb');
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5500;
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
 require("dotenv").config();
@@ -26,6 +26,10 @@ async function run() {
         const imagingCollection = client.db("doctor-meet-appointment").collection("imaging");
         const pathologyCollection = client.db("doctor-meet-appointment").collection("pathology");
         const bookedDiagnosisCollection=client.db("doctor-meet-appointment").collection("booked-diagnosis");
+        const premiumFaciltiesCollection=client.db("doctor-meet-appointment").collection("premium-facilities")
+        const invoiceCollection=client.db("doctor-meet-appointment").collection("invoices")
+        
+
         app.get("/doctors",async(req,res)=>{
             const doctors = await doctorCollection.find({}).toArray();
             res.json(doctors);
@@ -93,7 +97,15 @@ async function run() {
             const result = await doctorCollection.findOne(query);
             res.json(result);
         })
-        
+        app.get("/premiumFacilities",async(req,res)=>{
+            const facilities = await premiumFaciltiesCollection.find({}).toArray();
+            res.json(facilities);
+        })
+        app.get("/allInvoices", async (req, res) => {
+           
+            const result = await invoiceCollection.find({}).toArray();
+            res.json(result);
+        })
         app.post("/allAppointments", async (req, res) => {
 
             const appointment = await appointmentCollection.insertOne(req.body);
@@ -104,6 +116,11 @@ async function run() {
 
             const diagnosos = await bookedDiagnosisCollection.insertOne(req.body);
             res.json(diagnosos);
+        })
+        app.post("/allInvoices", async (req, res) => {
+
+            const invoices = await invoiceCollection.insertOne(req.body);
+            res.json(invoices);
         })
         app.put("/allAppointments/:id", async (req, res) => {
             const id = req.params.id;
