@@ -44,6 +44,11 @@ async function run() {
             const appointmentPerUser = await appointmentCollection.find(query).toArray();
             res.json(appointmentPerUser);
         })
+        app.get("/allAppointments/doctor", async (req, res) => {
+            const query={ email: req.query.doctorInfo.email };
+            const appointmentPerUser = await appointmentCollection.find(query).toArray();
+            res.json(appointmentPerUser);
+        })
     
         app.get("/allAppointments/:id", async (req, res) => {
             const id=req.params.id;
