@@ -28,6 +28,7 @@ async function run() {
         const bookedDiagnosisCollection=client.db("doctor-meet-appointment").collection("booked-diagnosis");
         const premiumFaciltiesCollection=client.db("doctor-meet-appointment").collection("premium-facilities")
         const invoiceCollection=client.db("doctor-meet-appointment").collection("invoices")
+        const premiumMembersCollection=client.db("doctor-meet-appointment").collection("premium-members")
         
 
         app.get("/doctors",async(req,res)=>{
@@ -106,6 +107,16 @@ async function run() {
             const result = await invoiceCollection.find({}).toArray();
             res.json(result);
         })
+        app.get("/premiumMembers", async (req, res) => {
+           
+            const result = await premiumMembersCollection.find({}).toArray();
+            res.json(result);
+        })
+        app.get("/premiumMembers/single", async (req, res) => {
+            const query={ userEmail: req.query.email };
+            const myBookedDiagnosis = await premiumMembersCollection.findOne(query);
+            res.json(myBookedDiagnosis);
+        })
         app.post("/allAppointments", async (req, res) => {
 
             const appointment = await appointmentCollection.insertOne(req.body);
@@ -121,6 +132,11 @@ async function run() {
 
             const invoices = await invoiceCollection.insertOne(req.body);
             res.json(invoices);
+        })
+        app.post("/premiumMembers", async (req, res) => {
+
+            const newPremiumMember = await premiumMembersCollection.insertOne(req.body);
+            res.json(newPremiumMember);
         })
         app.put("/allAppointments/:id", async (req, res) => {
             const id = req.params.id;
