@@ -44,17 +44,22 @@ async function run() {
             const appointmentPerUser = await appointmentCollection.find(query).toArray();
             res.json(appointmentPerUser);
         })
-        app.get("/allAppointments/doctor", async (req, res) => {
-            const query={ email: req.query.doctorInfo.email };
-            const appointmentPerUser = await appointmentCollection.find(query).toArray();
-            res.json(appointmentPerUser);
-        })
+        
     
         app.get("/allAppointments/:id", async (req, res) => {
             const id=req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await appointmentCollection.findOne(query);
             res.json(result);
+        })
+        app.get("/allAppointments/doctorSchedule/:email", async (req, res) => {
+            
+            const doctorEmail=req.params.email;
+            
+            const query={doctorEmail:doctorEmail};
+            
+            const bookedAppointments = await appointmentCollection.find(query).toArray();
+            res.json(bookedAppointments);
         })
         app.get("/testProcuders", async (req, res) => {
            
