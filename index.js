@@ -193,6 +193,12 @@ async function run() {
             const result=await doctorCollection.deleteOne(query);
             res.json(result)
         })
+        app.delete("/allInvoices/:id",async(req,res)=>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result=await invoiceCollection.deleteOne(query);
+            res.json(result)
+        })
     }
     finally {
 
